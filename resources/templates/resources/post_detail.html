@@ -1,0 +1,50 @@
+{% extends "resources/base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <a href="{% url 'post_list' post.course.id %}">< 返回 "{{ post.course.name }}" 讨论区</a>
+    <hr>
+
+    <!-- 主贴卡片 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title">{{ post.title }}</h1>
+            <p class="card-text"><small class="text-muted">发布于: {{ post.created_at }}</small></p>
+            <p class="card-text">{{ post.content|linebreaksbr }}</p>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="img-fluid rounded" alt="帖子图片">
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 回复列表 -->
+    <h3>所有回复 ({{ post.replies.count }})</h3>
+    {% for reply in post.replies.all %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="card-text">{{ reply.content|linebreaksbr }}</p>
+                {% if reply.image %}
+                    <img src="{{ reply.image.url }}" class="img-fluid rounded mb-2" alt="回复图片">
+                {% endif %}
+                <p class="card-text"><small class="text-muted">回复于: {{ reply.created_at }}</small></p>
+            </div>
+        </div>
+    {% empty %}
+        <p>还没有人回复，快来抢沙发！</p>
+    {% endfor %}
+
+    <hr>
+
+    <!-- 回复表单 -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">发表你的回复</h5>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ reply_form.as_p }}
+                <button type="submit" class="btn btn-primary">确认回复</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

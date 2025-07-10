@@ -1,0 +1,16 @@
+{% extends "resources/base.html" %}
+
+{% block title %}发布新帖 - {{ course.name }}{% endblock %}
+
+{% block content %}
+    <h1>在 "{{ course.name }}" 讨论区发布新帖</h1>
+    <a href="{% url 'post_list' course.id %}">< 返回讨论区</a>
+
+    <hr>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">确认发布</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "resources/base.html" %}
+
+{% block title %}{{ course.name }} - 讨论区{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>{{ course.name }} - 讨论区</h1>
+        <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">< 返回课程资料</a>
+    </div>
+
+    <div class="my-3">
+        <a href="{% url 'create_post' course.id %}" class="btn btn-success">发布新帖</a>
+    </div>
+
+    <hr>
+
+    <h2>帖子列表</h2>
+    <div class="list-group">
+        {% for post in posts %}
+            <a href="{% url 'post_detail' course.id post.id %}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ post.title }}</h5>
+                <small>发布于: {{ post.created_at|date:"Y-m-d H:i" }}</small>
+            </a>
+        {% empty %}
+            <div class="list-group-item">
+                <p class="mb-0">这个讨论区还没有任何帖子，快来发布第一帖吧！</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

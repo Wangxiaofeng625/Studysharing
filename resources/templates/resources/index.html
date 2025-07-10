@@ -1,0 +1,19 @@
+{% extends "resources/base.html" %}
+
+{% block title %}课程列表 - 首页{% endblock %}
+
+{% block content %}
+    <h1>所有课程</h1>
+    <div class="list-group">
+        {% for course in courses %}
+            <a href="{% url 'course_detail' course.id %}" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ course.name }}</h5>
+                </div>
+                <p class="mb-1">{{ course.description }}</p>
+            </a>
+        {% empty %}
+            <p class="list-group-item">暂无课程。</p>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "resources/base.html" %}
+
+{% block title %}{{ course.name }} - 课程详情{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>{{ course.name }}</h1>
+        <a href="{% url 'post_list' course.id %}" class="btn btn-primary">进入讨论区</a>
+    </div>
+    <p class="lead">{{ course.description }}</p>
+
+    <hr>
+
+    <h2>资料列表</h2>
+    <ul class="list-group mb-4">
+        {% for resource in course.resources.all %}
+            <li class="list-group-item">
+                <a href="{{ resource.file.url }}" target="_blank">{{ resource.title }}</a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">暂无资料。</li>
+        {% endfor %}
+    </ul>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">分享你的资料</h5>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">确认上传</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
