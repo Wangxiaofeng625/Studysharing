@@ -82,24 +82,33 @@ def create_post(request, course_id):
 
 
 def post_detail(request, course_id, post_id):
-    # 获取帖子对象，如果找不到就返回 404
+    # 用一种更安全的方式获取 post，确保它属于正确的课程
     post = get_object_or_404(Post, pk=post_id, course__id=course_id)
 
-    # 处理回复表单的提交
+    # 创建一个 course 变量，供模板使用
+    course = post.course
+
     if request.method == 'POST':
         reply_form = ReplyForm(request.POST, request.FILES)
         if reply_form.is_valid():
             reply = reply_form.save(commit=False)
-            reply.post = post  # 将回复关联到当前帖子
+            reply.post = post
+            parent_id = request.POST.get('parent_id')
+            if parent_id:
+                reply.parent = get_object_or_404(Reply, id=parent_id)
             reply.save()
-            # 成功后重定向回当前页面，避免重复提交
-            return redirect('post_detail', course_id=course_id, post_id=post.id)
+            return redirect('post_detail', course_id=course.id, post_id=post.id)
     else:
-        # GET 请求时，创建一个空的回复表单
         reply_form = ReplyForm()
 
+    # 查询顶级回复
+    top_level_replies = post.replies.filter(parent__isnull=True).order_by('created_at')
+
+    # 构建一个包含所有必需变量的 context
     context = {
         'post': post,
+        'course': course, # 确保 course 在这里
         'reply_form': reply_form,
+        'top_level_replies': top_level_replies,
     }
     return render(request, 'resources/post_detail.html', context)

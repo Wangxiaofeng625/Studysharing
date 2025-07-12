@@ -49,6 +49,8 @@ class Reply(models.Model):
     # 关联到帖子，一个帖子下可以有很多回复
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='replies', verbose_name="所属帖子")
 
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='child_replies')
+
     content = models.TextField(verbose_name="回复内容")
 
     image = models.ImageField(upload_to='reply_images/%Y/%m/%d/', blank=True, null=True, verbose_name="回复图片")
